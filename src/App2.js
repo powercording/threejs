@@ -1,4 +1,4 @@
-import * as THREE from "/node_modules/three/build/three.module.js";
+import * as THREE from "../node_modules/three/build/three.module.js";
 import { OrbitControls } from "/node_modules/three/examples/jsm/controls/OrbitControls.js";
 
 class App {
@@ -24,6 +24,7 @@ class App {
 
     requestAnimationFrame(this.render.bind(this));
   }
+
   setControls() {
     new OrbitControls(this.$camera, this.$container);
   }
@@ -34,7 +35,7 @@ class App {
     const aspect = width / height;
     const camera = new THREE.PerspectiveCamera(75, aspect, 0.1, 100);
 
-    camera.position.z = 2;
+    camera.position.z = 15;
     this.$camera = camera;
   }
 
@@ -48,19 +49,29 @@ class App {
   }
 
   setupModel() {
-    // const geometry = new THREE.BoxGeometry(1, 1, 1);
-    // const material = new THREE.MeshPhongMaterial({ color: 0x44a88 });
+    class CustomSinCurve extends THREE.Curve {
+      constructor(scale) {
+        super();
+        this.scale = scale;
+      }
+      getPoint(t) {
+        const tx = t * 3 - 1.5;
+        const ty = Math.sin(2 * Math.PI * t);
+        const tz = 0;
+        return new THREE.Vector3(tx, ty, tz).multiplyScalar(this.scale);
+      }
+    }
 
-    // const cube = new THREE.Mesh(geometry, material);
+    const path = new CustomSinCurve(4);
+    const geometry = new THREE.TubeGeometry(path);
 
-    const geometry = new THREE.BoxGeometry(1, 1, 1);
     const fillMaterial = new THREE.MeshPhongMaterial({ color: 0x515151 });
     const cube = new THREE.Mesh(geometry, fillMaterial);
 
-    const lineMaterial = new THREE.LineBasicMaterial({ color: 0xffff0 });
+    const material = new THREE.LineBasicMaterial({ color: 0xffff00 });
     const line = new THREE.LineSegments(
       new THREE.WireframeGeometry(geometry),
-      lineMaterial
+      material
     );
 
     const group = new THREE.Group();
