@@ -24,6 +24,7 @@ class App {
   }
 
   setupCamera() {
+    q;
     const width = this.$container.clientWidth;
     const height = this.$container.clientHeight;
     const aspect = width / height;
