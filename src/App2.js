@@ -49,22 +49,37 @@ class App {
   }
 
   setupModel() {
+    const textureLoader = new THREE.TextureLoader();
+
+    const earthMap = textureLoader.load(
+      "../asset/earthmap1k.jpg",
+      (texture) => {}
+    );
+
+    const moonMap = textureLoader.load(
+      "../asset/moonTexture.jpg",
+      (texture) => {}
+    );
+
+    const sunMap = textureLoader.load(
+      "../asset/sunTexture.jpg",
+      (texture) => {}
+    );
+
     const solarSystem = new THREE.Object3D();
     this.$scene.add(solarSystem);
 
     const radius = 1;
-    const widthSegments = 24;
-    const heightSegments = 24;
+    const widthSegments = 64;
+    const heightSegments = 64;
 
     const sphereGeometry = new THREE.SphereGeometry(
       radius,
       widthSegments,
       heightSegments
     );
-
-    const sunMaterial = new THREE.MeshPhongMaterial({
-      emissive: 0xffff00,
-      flatShading: true,
+    const sunMaterial = new THREE.MeshStandardMaterial({
+      map: sunMap,
     });
 
     const sunMesh = new THREE.Mesh(sphereGeometry, sunMaterial);
@@ -75,23 +90,21 @@ class App {
     const earthOrbit = new THREE.Object3D();
     solarSystem.add(earthOrbit);
 
-    const earthMaterial = new THREE.MeshPhongMaterial({
-      color: 0x2233ff,
-      emissive: 0x112244,
-      flatShading: true,
+    const earthMaterial = new THREE.MeshStandardMaterial({
+      map: earthMap,
     });
+
     const earthMesh = new THREE.Mesh(sphereGeometry, earthMaterial);
     earthOrbit.position.x = 10;
     earthOrbit.add(earthMesh);
+    earthOrbit.rotateZ(0.4);
 
     const moonOrbit = new THREE.Object3D();
     moonOrbit.position.x = 2;
-    earthOrbit.add(moonOrbit);
 
-    const moonMaterial = new THREE.MeshPhongMaterial({
-      color: 0x888888,
-      emissive: 0x222222,
-      flatShading: true,
+    earthOrbit.add(moonOrbit);
+    const moonMaterial = new THREE.MeshStandardMaterial({
+      map: moonMap,
     });
 
     const moonMesh = new THREE.Mesh(sphereGeometry, moonMaterial);
@@ -99,6 +112,7 @@ class App {
     moonOrbit.add(moonMesh);
 
     this.$solarSystem = solarSystem;
+    this.$earthMesh = earthMesh;
     this.$earthOrbit = earthOrbit;
     this.$moonOrbit = moonOrbit;
   }
@@ -113,37 +127,45 @@ class App {
     this.$renderer.setSize(width, height);
   }
 
-  update(time) {
-    // const milTime = time * 0.001;
-    // const x = 10 ** 2 - milTime ** 2;
-    // const y = 10 ** 2 - x ** 2;
-    // console.log(Math.sqrt(x));
-    // this.$earthOrbit.position.x = Math.sqrt(x);
-    // this.$earthOrbit.position.y = Math.sqrt(y);
+  sunUpdate(time) {
+    const rotation = time * 0.006;
+    this.$sunMesh.rotation.y = rotation / 10;
   }
 
   earthUpdate(time) {
     const angle = time * 0.001;
     const rotation = time * 0.006;
+    const radius = 10;
 
     // (radius X cos) , (radius X sin)의 좌표값은 빗변의 길이를 radius 만큼으로 한다. 여기서는 10으로 임의로 정했다.
     // angle 의 경우 무한히 증가하는 시간값 (time 파라미터) 이지만 Math.cos 함수가 이를 1~0까지의 값으로 순환시킬 수 있다.
     // 그리하여 시간값의 증가로 인하여 cos 와 sin 은 무한히 1과 0사이를 반복하고 이 값에 반지름을 곱하여 천체 공전의 궤적을 추적할 수 있다.
-    const x = Math.cos(angle) * 10;
-    const y = Math.sin(angle) * 10;
+    const x = Math.cos(angle) * radius;
+    const y = Math.sin(angle) * radius;
 
     this.$earthOrbit.position.x = x;
     this.$earthOrbit.position.z = y;
 
-    this.$sunMesh.rotation.y = rotation / 10;
-    this.$earthOrbit.rotation.y = rotation;
+    this.$earthMesh.rotation.y = -rotation;
     this.$moonOrbit.rotation.y = rotation;
+  }
+
+  moonUpdate(time) {
+    const angle = time * 0.015;
+    const radiust = 2;
+
+    const x = Math.cos(angle) * radiust;
+    const z = Math.sin(angle) * radiust;
+
+    this.$moonOrbit.position.x = x;
+    this.$moonOrbit.position.z = z;
   }
 
   render(time) {
     this.$renderer.render(this.$scene, this.$camera);
-    // this.update(time);
+    this.sunUpdate(time);
     this.earthUpdate(time);
+    this.moonUpdate(time);
     requestAnimationFrame(this.render.bind(this));
   }
 }
