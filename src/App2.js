@@ -126,6 +126,9 @@ class App {
     const angle = time * 0.001;
     const rotation = time * 0.006;
 
+    // (radius X cos) , (radius X sin)의 좌표값은 빗변의 길이를 radius 만큼으로 한다. 여기서는 10으로 임의로 정했다.
+    // angle 의 경우 무한히 증가하는 시간값 (time 파라미터) 이지만 Math.cos 함수가 이를 1~0까지의 값으로 순환시킬 수 있다.
+    // 그리하여 시간값의 증가로 인하여 cos 와 sin 은 무한히 1과 0사이를 반복하고 이 값에 반지름을 곱하여 천체 공전의 궤적을 추적할 수 있다.
     const x = Math.cos(angle) * 10;
     const y = Math.sin(angle) * 10;
 
