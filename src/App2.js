@@ -78,7 +78,7 @@ class App {
     const textureLoader = new THREE.TextureLoader();
 
     //sun
-    const sunMap = textureLoader.load("../asset/sun.jpg", (texture) => {});
+    const sunMap = textureLoader.load("./asset/sun.jpg", (texture) => {});
     const sunMaterial = new THREE.MeshStandardMaterial({
       map: sunMap,
     });
@@ -89,16 +89,14 @@ class App {
 
     //generate stars
     solarUniverse.forEach((star) => {
-      console.log(star);
       const orbit = new THREE.Object3D();
       solarSystem.add(orbit);
 
-      const map = textureLoader.load(`../asset/${star}.jpg`, (texture) => {});
+      const map = textureLoader.load(`./asset/${star}.jpg`, (texture) => {});
       const material = new THREE.MeshStandardMaterial({
         map: map,
       });
       const mesh = new THREE.Mesh(sphereGeometry, material);
-      console.log(relativeSize[star]);
       mesh.scale.set(
         relativeSize[star],
         relativeSize[star],
@@ -118,7 +116,7 @@ class App {
     moonOrbit.position.x = 1.5;
 
     this.earth.add(moonOrbit);
-    const moonMap = textureLoader.load("../asset/moon.jpg", (texture) => {});
+    const moonMap = textureLoader.load("./asset/moon.jpg", (texture) => {});
     const moonMaterial = new THREE.MeshStandardMaterial({
       map: moonMap,
     });
