@@ -46,15 +46,17 @@ class App {
     camera.position.z = 40;
     camera.position.y = 10;
     this.$camera = camera;
+    this.$scene.add(camera);
   }
 
   setupLight() {
     const lightColor = 0xffffff;
-    const intensity = 1;
+    const intensity = 2;
     const light = new THREE.DirectionalLight(lightColor, intensity);
 
     light.position.set(-2, 2, 4);
-    this.$scene.add(light);
+    // this.$scene.add(light);
+    this.$camera.add(light);
   }
 
   setupModel() {
