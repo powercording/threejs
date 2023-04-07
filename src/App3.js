@@ -1,5 +1,7 @@
 import * as THREE from "../node_modules/three/build/three.module.js";
-import { OrbitControls } from "/node_modules/three/examples/jsm/controls/OrbitControls.js";
+import { OrbitControls } from "../node_modules/three/examples/jsm/controls/OrbitControls.js";
+import { RectAreaLightUniformsLib } from "../node_modules/three/examples/jsm/lights/RectAreaLightUniformsLib.js";
+import { RectAreaLightHelper } from "../node_modules/three/examples/jsm/helpers/RectAreaLightHelper.js";
 
 class App {
   constructor() {
@@ -41,14 +43,51 @@ class App {
   }
 
   setupLight() {
-    // const light = new THREE.AmbientLight(0xffffff, 5);
+    // const light = new THREE.AmbientLight(0xffffff, 35);
     // const light = new THREE.HemisphereLight("#b0d8f5", "#bb7a1c", 1);
-    const light = new THREE.DirectionalLight("#ffffff", 1);
+
+    //directionLight
+    // const light = new THREE.DirectionalLight("#ffffff", 1);
+    // light.position.set(0, 5, 0);
+    // light.target.position.set(0, 0, 0);
+    // this.$scene.add(light.target);
+
+    // const helper = new THREE.DirectionalLightHelper(light);
+    // this.$scene.add(helper);
+    // this.$lightHelper = helper;
+
+    //PointLight
+    // const light = new THREE.PointLight(0xffffff, 2);
+    // light.position.set(0, 5, 0);
+
+    // light.distance = 0;
+
+    // const helper = new THREE.PointLightHelper(light);
+    // this.$scene.add(helper);
+
+    // spotLight;
+    // const light = new THREE.SpotLight(0xffffff, 1);
+    // light.position.set(0, 5, 0);
+    // light.target.position.set(0, 1, 0);
+    // light.angle = THREE.MathUtils.degToRad(30);
+    // light.penumbra = 0.3;
+    // this.$scene.add(light.target);
+
+    // const helper = new THREE.SpotLightHelper(light);
+    // this.$scene.add(helper);
+    // this.$lightHelper = helper;
+
+    //RecAreaLight
+    RectAreaLightUniformsLib.init();
+
+    const light = new THREE.RectAreaLight("white", 10, 6, 2);
     light.position.set(0, 5, 0);
-    light.target.position.set(0, 0, 0);
+    light.rotation.x = THREE.MathUtils.degToRad(-45);
+
+    const helper = new RectAreaLightHelper(light);
+    light.add(helper);
 
     this.$scene.add(light);
-    this.$scene.add(light.target);
     this.$light = light;
   }
 
@@ -125,13 +164,25 @@ class App {
 
   update(time) {
     const milTime = time * 0.001;
-    const smallSphere = this.$scene.getObjectByName("smallSpherePivot");
-    if (smallSphere) {
-      smallSphere.rotation.y = THREE.MathUtils.degToRad(milTime * 100);
+    const smallSpherePivot = this.$scene.getObjectByName("smallSpherePivot");
+    if (smallSpherePivot) {
+      smallSpherePivot.rotation.y = THREE.MathUtils.degToRad(milTime * 100);
+
+      // if (this.$light) {
+      //   const smallSphere = smallSpherePivot.children[0];
+      //   smallSphere.getWorldPosition(this.$light.position);
+
+      //   if (this.$lightHelper) this.$lightHelper.update();
+      // }
+
+      if (this.$light.target) {
+        const smallSphere = smallSpherePivot.children[0];
+        smallSphere.getWorldPosition(this.$light.target.position);
+
+        if (this.$lightHelper) this.$lightHelper.update();
+      }
     }
   }
 }
 
-window.onload = function () {
-  new App();
-};
+new App();
