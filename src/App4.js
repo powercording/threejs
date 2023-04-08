@@ -75,7 +75,7 @@ class App {
     const loader = new GLTFLoader();
     loader.load("../public/asset/skull/scene.gltf", (obj) => {
       const skullHead = obj.scene;
-      skullHead.rotation.x = 1.2;
+      skullHead.rotation.x = 1;
 
       const skull = new Three.Object3D();
       skull.add(skullHead);
