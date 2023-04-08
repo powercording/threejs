@@ -18,6 +18,7 @@ class App {
 
     this.setupCamera();
     this.setupLight();
+    this.setupBackgound();
     this.setupModel();
     this.setControls();
 
@@ -40,6 +41,10 @@ class App {
     camera.position.set(7, 7, 0);
     camera.lookAt(0, 0, 0);
     this.$camera = camera;
+  }
+
+  setupBackgound() {
+    this.$scene.background = new THREE.Color("0xffffff");
   }
 
   setupLight() {
